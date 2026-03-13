@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanaka Oasis | Fine Dining & Diplomatic Stays</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c5a059;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.98);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--dark); background: var(--light); line-height: 1.6; overflow-x: hidden; }
+        h1, h2, h3, .luxury-font { font-family: 'Playfair Display', serif; }
+
+        /* Navigation */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 20px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        nav.scrolled { background: var(--glass); padding: 15px 5%; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        .logo { font-size: 1.4rem; font-weight: 800; color: white; text-decoration: none; letter-spacing: 1px; }
+        nav.scrolled .logo { color: var(--dark); }
+        nav.scrolled .logo span { color: var(--gold); }
+
+        .nav-links { display: flex; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; margin-left: 35px; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        nav.scrolled .nav-links a { color: var(--dark); }
+        .nav-links a:hover { color: var(--gold) !important; }
+
+        /* Mobile Menu Button */
+        .menu-btn { display: none; cursor: pointer; color: white; font-size: 1.8rem; }
+        nav.scrolled .menu-btn { color: var(--dark); }
+
+        /* Mobile Sidebar */
+        .mobile-nav {
+            position: fixed; top: 0; right: -100%; width: 80%; height: 100vh;
+            background: var(--dark); z-index: 1001; transition: 0.5s;
+            display: flex; flex-direction: column; padding: 100px 40px;
+        }
+        .mobile-nav.active { right: 0; box-shadow: -10px 0 50px rgba(0,0,0,0.5); }
+        .mobile-nav a { color: white; text-decoration: none; font-size: 1.5rem; margin-bottom: 30px; font-family: 'Playfair Display'; }
+
+        /* Hero Section */
+        header {
+            height: 85vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=2070');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; color: white; padding: 0 20px;
+        }
+        .hero-title { font-size: clamp(2rem, 10vw, 4.5rem); margin-bottom: 15px; line-height: 1.1; }
+
+        /* Menu Section (Background Update) */
+        section { padding: 80px 5%; }
+        
+        #menu { 
+            /* Added background image, overlay, and text color update for readability */
+            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95)), 
+                        url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--light); /* Setting base text to light for this dark section */
+        }
+        
+        .section-container { max-width: 1400px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-tag { color: var(--gold); text-transform: uppercase; font-weight: 700; letter-spacing: 3px; font-size: 0.8rem; display: block; margin-bottom: 10px; }
+        .section-title { font-size: 2.5rem; }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        .menu-item {
+            background: white; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03); transition: 0.4s;
+            display: flex; flex-direction: column;
+            color: var(--dark); /* Ensuring menu text remains dark on white card */
+        }
+        .menu-item:hover { transform: translateY(-10px); box-shadow: 0 20px 45px rgba(0,0,0,0.2); }
+        .menu-img { width: 100%; height: 260px; object-fit: cover; }
+        .menu-content { padding: 25px; flex-grow: 1; position: relative; }
+        .price-tag { font-weight: 700; color: var(--gold); font-size: 1.1rem; margin-bottom: 10px; display: block; }
+        .menu-content h3 { font-size: 1.5rem; margin-bottom: 12px; }
+        .menu-content p { color: #64748b; font-size: 0.95rem; }
+
+        /* Offers Section */
+        .offers-banner {
+            background: var(--dark); border-radius: 40px; padding: 60px 5%;
+            margin: 40px 5%; color: white; display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px;
+        }
+        .offer-item { border-left: 2px solid var(--gold); padding-left: 25px; }
+        .offer-item h4 { font-family: 'Playfair Display'; font-size: 1.6rem; color: var(--gold); margin-bottom: 10px; }
+
+        /* Reservation Section */
+        .reservation-section { background-color: var(--light); padding: 100px 5%; }
+        .reservation-card {
+            background: white; max-width: 800px; margin: 0 auto;
+            border-radius: 30px; padding: 50px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+        }
+        .res-span-2 { grid-column: span 2; }
+        .form-group { position: relative; margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 1px; }
+        .form-input {
+            width: 100%; padding: 15px 20px;
+            border: 2px solid #e2e8f0; border-radius: 10px;
+            font-family: inherit; font-size: 1rem; color: var(--dark);
+            transition: 0.3s;
+        }
+        .form-input:focus { outline: none; border-color: var(--gold); }
+        
+        .btn-reserve {
+            grid-column: span 2;
+            background: var(--gold); color: white;
+            border: none; padding: 18px;
+            border-radius: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px;
+            cursor: pointer; transition: 0.3s; margin-top: 10px;
+        }
+        .btn-reserve:hover { background: #b08d4b; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(197, 160, 89, 0.3); }
+
+        /* Responsive Mobile Adjustments */
+        @media (max-width: 992px) {
+            .nav-links { display: none; }
+            .menu-btn { display: block; }
+            header { height: 70vh; }
+        }
+
+        @media (max-width: 600px) {
+            section { padding: 60px 20px; }
+            .menu-grid { grid-template-columns: 1fr; }
+            .offers-banner { border-radius: 20px; padding: 40px 25px; }
+            .reservation-card { grid-template-columns: 1fr; padding: 30px 20px; }
+            .res-span-2, .btn-reserve { grid-column: span 1; }
+        }
+
+        /* Floating Contact */
+        .fab-group { position: fixed; bottom: 30px; right: 25px; display: flex; flex-direction: column; gap: 12px; z-index: 999; }
+        .fab { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; color: white; font-size: 1.4rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: 0.3s; }
+        .fab-wa { background: #25D366; }
+        .fab-cl { background: var(--gold); }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-nav" id="mobileNav">
+        <div style="position: absolute; top: 30px; right: 30px; font-size: 2rem; color: white; cursor: pointer;" onclick="toggleMenu()">×</div>
+        <a href="#" onclick="toggleMenu()">Home</a>
+        <a href="#menu" onclick="toggleMenu()">Gourmet Menu</a>
+        <a href="#offers" onclick="toggleMenu()">Special Offers</a>
+        <a href="#reserve" onclick="toggleMenu()">Book a Table</a>
+    </div>
+
+    <nav id="navbar">
+        <a href="#" class="logo">JERRY <span> CREATIVITY</span></a>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#menu">Menu</a>
+            <a href="#offers">Offers</a>
+            <a href="#reserve">Reservation</a>
+        </div>
+        <div class="menu-btn" onclick="toggleMenu()">☰</div>
+    </nav>
+
+    <header>
+        <span class="section-tag" style="color: white; opacity: 0.8;">Est. 2026</span>
+        <h1 class="hero-title">A Symphony of Flavor <br>& Luxury Stays</h1>
+        <p style="letter-spacing: 2px; text-transform: uppercase; font-size: 0.9rem;">The Premier Diplomatic Residence</p>
+    </header>
+
+    <section id="menu">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-tag">Culinaria</span>
+                <h2 class="section-title">The Master's Menu</h2>
+            </div>
+            
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=1000" alt="Avocado Diplomat" class="menu-img">
+                    <div class="menu-content">
+                        <span class="price-tag">Ksh 1,400</span>
+                        <h3>Avocado Diplomat</h3>
+                        <p>Poached eggs, Hass avocado, and hollandaise sauce on artisanal sourdough bread.</p>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=1000" alt="T-Bone Steak" class="menu-img">
+                    <div class="menu-content">
+                        <span class="price-tag">Ksh 3,500</span>
+                        <h3>T-Bone Steak</h3>
+                        <p>Fire-grilled 500g Kenyan beef served with rosemary potatoes and peppercorn jus.</p>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&q=80&w=1000" alt="Seafood Risotto" class="menu-img">
+                    <div class="menu-content">
+                        <span class="price-tag">Ksh 2,600</span>
+                        <h3>Seafood Risotto</h3>
+                        <p>Arborio rice infused with saffron, topped with jumbo prawns and calamari.</p>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1485921325833-c519f76c4927?auto=format&fit=crop&q=80&w=1000" alt="Atlantic Salmon" class="menu-img">
+                    <div class="menu-content">
+                        <span class="price-tag">Ksh 2,800</span>
+                        <h3>Atlantic Salmon Gremolata</h3>
+                        <p>Pan-seared salmon fillet topped with citrus herb gremolata, served over asparagus and cauliflower purée.</p>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=1000" alt="Berry Cheesecake" class="menu-img">
+                    <div class="menu-content">
+                        <span class="price-tag">Ksh 1,200</span>
+                        <h3>Berry Cheesecake</h3>
+                        <p>Velvety New York style cheesecake topped with fresh wild berries and mint.</p>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=1000" alt="Truffle Pizza" class="menu-img">
+                    <div class="menu-content">
+                        <span class="price-tag">Ksh 1,950</span>
+                        <h3>Truffle Mushroom Pizza</h3>
+                        <p>Thin crust with wild mushrooms, truffle oil, and fresh buffalo mozzarella.</p>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&q=80&w=1000" alt="Lamb Tagine" class="menu-img">
+                    <div class="menu-content">
+                        <span class="price-tag">Ksh 2,200</span>
+                        <h3>Moroccan Lamb Tagine</h3>
+                        <p>Slow-cooked lamb with apricots, almonds, and traditional North African spices.</p>
+                    </div>
+                </div>
+
+                 <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=1000" alt="Avocado Diplomat" class="menu-img">
+                    <div class="menu-content">
+                        <span class="price-tag">Ksh 1,400</span>
+                        <h3>Avocado Diplomat</h3>
+                        <p>Poached eggs, Hass avocado, and hollandaise sauce on artisanal sourdough bread.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="offers" class="offers-banner">
+        <div class="offer-item">
+            <h4>Family Sundays</h4>
+            <p>Kids under 10 eat free every Sunday from 12 PM to 4 PM. Valid for all residents.</p>
+        </div>
+        <div class="offer-item">
+            <h4>Executive Lunch</h4>
+            <p>Enjoy a 2-course express lunch for only <strong>Ksh 2,200</strong>. Mon - Fri.</p>
+        </div>
+        <div class="offer-item">
+            <h4>Wine Night</h4>
+            <p>50% off on all South African bottles every Wednesday evening.</p>
+        </div>
+    </div>
+
+    <section id="reserve" class="reservation-section">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-tag">Reservations</span>
+                <h2 class="section-title">Secure Your Table</h2>
+            </div>
+
+            <form class="reservation-card" onsubmit="event.preventDefault(); alert('Reservation request sent. Fanaka Oasis Concierge will contact you shortly.');">
+                <div class="form-group res-span-2">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" class="form-input" placeholder="Diplomat / Guest Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Preferred Date</label>
+                    <input type="date" id="date" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="time">Preferred Time</label>
+                    <input type="time" id="time" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="guests">Number of Guests</label>
+                    <input type="number" id="guests" class="form-input" min="1" max="10" placeholder="1-10" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" class="form-input" placeholder="+254..." required>
+                </div>
+
+                <div class="form-group res-span-2">
+                    <label for="special">Special Requests</label>
+                    <textarea id="special" class="form-input" rows="3" placeholder="Dietary restrictions or preferred seating?"></textarea>
+                </div>
+
+                <button type="submit" class="btn-reserve">Confirm Reservation</button>
+            </form>
+        </div>
+    </section>
+
+    <div class="fab-group">
+        <a href="tel:+254700000000" class="fab fab-cl">📞</a>
+        <a href="https://wa.me/254700000000" class="fab fab-wa">💬</a>
+    </div>
+
+    <footer style="padding: 60px 5%; background: #020617; color: rgba(255,255,255,0.6); text-align: center;">
+        <h2 style="color: white; margin-bottom: 20px;">FANAKA OASIS</h2>
+        <p>123 Diplomatic Crescent, Westlands, Nairobi</p>
+        <p style="margin-top: 15px; font-size: 0.8rem;">© 2026 Jerrysoftwares. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.onscroll = function() {
+            var nav = document.getElementById('navbar');
+            if (window.pageYOffset > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        };
+
+        // Mobile Menu Toggle
+        function toggleMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            mobileNav.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
